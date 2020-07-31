@@ -1,4 +1,4 @@
-package code.playground;
+package playground.logging;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
