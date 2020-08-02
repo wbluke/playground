@@ -1,9 +1,7 @@
 name: logging-system
 
 on:
-  push:
-    branches: 
-      - master
+  workflow_dispatch:
 
 env:
   S3_BUCKET_NAME: logging-system-deploy
