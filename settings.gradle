@@ -1,1 +1,3 @@
 rootProject.name = 'playground'
+
+include 'logging-system'
