@@ -1,5 +1,8 @@
 bootJar { enabled = false }
-jar { enabled = true }
+jar {
+    enabled = true
 
-dependencies {
+    manifest {
+        attributes 'Main-Class': 'playground.logging.LoggingSystemApplication'
+    }
 }
