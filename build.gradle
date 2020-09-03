@@ -1,20 +1,27 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
+buildscript {
 
-plugins {
-    id 'org.springframework.boot' version '2.3.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'java'
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE"
+    }
+
 }
 
 subprojects {
-    group = 'code'
-    version = '0.0.1-SNAPSHOT'
-    sourceCompatibility = 1.8
 
     apply plugin: 'java'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'application'
+
+    group = 'code'
+    version = '0.0.1-SNAPSHOT'
+    sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -28,22 +35,42 @@ subprojects {
     }
 
     dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-batch'
-        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-
         compileOnly 'org.projectlombok:lombok'
-        runtimeOnly 'com.h2database:h2'
         annotationProcessor 'org.projectlombok:lombok'
+
+        runtimeOnly 'com.h2database:h2'
+
+        implementation 'org.springframework.boot:spring-boot-starter-web'
         testImplementation('org.springframework.boot:spring-boot-starter-test') {
             exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
         }
-        testImplementation 'org.springframework.batch:spring-batch-test'
+
+        // todo : Junit4 제거
+        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+    }
+
+    // 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성해줍니다.
+    task initSourceFolders {
+        sourceSets*.java.srcDirs*.each {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
+
+        sourceSets*.resources.srcDirs*.each {
+            if (!it.exists()) {
+                it.mkdirs()
+            }
+        }
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     dependencyManagement {
         imports {
-            mavenBom SpringBootPlugin.BOM_COORDINATES
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         }
     }
 
