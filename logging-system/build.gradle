@@ -2,7 +2,11 @@ bootJar { enabled = false }
 jar {
     enabled = true
 
-    manifest {
-        attributes 'Main-Class': 'playground.logging.LoggingSystemApplication'
-    }
+//    manifest {
+//        attributes 'Main-Class': 'playground.logging.LoggingSystemApplication'
+//    }
 }
+
+//apply plugin: 'application'
+//mainClassName = 'code.playground.logging.LoggingSystemApplication'
+

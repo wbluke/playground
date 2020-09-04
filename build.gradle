@@ -19,7 +19,7 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'application'
 
-    group = 'code'
+    group = 'code.playground'
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = 1.8
 
@@ -46,7 +46,12 @@ subprojects {
         }
 
         // todo : Junit4 제거
-        testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.6.2'
+        testImplementation ('org.junit.jupiter:junit-jupiter-api:5.6.2') {
+            exclude module: 'junit-platform-commons'
+        }
+        testRuntimeOnly ('org.junit.jupiter:junit-jupiter-engine:5.6.2')
+        testRuntimeOnly ('org.junit.platform:junit-platform-engine:1.5.1')
+        testRuntimeOnly ('org.junit.platform:junit-platform-commons:1.5.1')
     }
 
     // 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성해줍니다.
