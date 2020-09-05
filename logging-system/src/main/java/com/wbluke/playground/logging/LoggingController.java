@@ -1,4 +1,4 @@
-package code.playground.logging;
+package com.wbluke.playground.logging;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

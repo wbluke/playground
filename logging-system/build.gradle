@@ -2,11 +2,30 @@ bootJar { enabled = false }
 jar {
     enabled = true
 
-//    manifest {
-//        attributes 'Main-Class': 'playground.logging.LoggingSystemApplication'
-//    }
+    manifest {
+        attributes (
+                'Class-Path': configurations.compile.files.collect {"$it.name"}.join(' '),
+                'Main-Class': 'com.wbluke.playground.logging.LoggingSystemApplication'
+        )
+    }
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
-//apply plugin: 'application'
-//mainClassName = 'code.playground.logging.LoggingSystemApplication'
+dependencies {
+    runtimeOnly 'com.h2database:h2'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // todo : Junit4 제거
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+    testImplementation ('org.junit.jupiter:junit-jupiter-api:5.6.2') {
+        exclude module: 'junit-platform-commons'
+    }
+    testRuntimeOnly ('org.junit.jupiter:junit-jupiter-engine:5.6.2')
+    testRuntimeOnly ('org.junit.platform:junit-platform-engine:1.5.1')
+    testRuntimeOnly ('org.junit.platform:junit-platform-commons:1.5.1')
+}
 

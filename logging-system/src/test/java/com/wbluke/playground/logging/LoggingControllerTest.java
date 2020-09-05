@@ -1,4 +1,4 @@
-package code.playground.logging;
+package com.wbluke.playground.logging;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

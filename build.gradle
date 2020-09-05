@@ -15,46 +15,36 @@ buildscript {
 subprojects {
 
     apply plugin: 'java'
+    apply plugin: 'groovy'
     apply plugin: 'org.springframework.boot'
     apply plugin: 'io.spring.dependency-management'
     apply plugin: 'application'
 
-    group = 'code.playground'
+    group = 'com.wbluke.playground'
     version = '0.0.1-SNAPSHOT'
     sourceCompatibility = 1.8
 
     repositories {
         mavenCentral()
         jcenter()
+        maven { url "https://plugins.gradle.org/m2/" }
     }
 
     configurations {
         compileOnly {
             extendsFrom annotationProcessor
         }
+
+        // configuration that holds jars to include in the jar
+        extraLibs
     }
 
     dependencies {
         compileOnly 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
-
-        runtimeOnly 'com.h2database:h2'
-
-        implementation 'org.springframework.boot:spring-boot-starter-web'
-        testImplementation('org.springframework.boot:spring-boot-starter-test') {
-            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-        }
-
-        // todo : Junit4 제거
-        testImplementation ('org.junit.jupiter:junit-jupiter-api:5.6.2') {
-            exclude module: 'junit-platform-commons'
-        }
-        testRuntimeOnly ('org.junit.jupiter:junit-jupiter-engine:5.6.2')
-        testRuntimeOnly ('org.junit.platform:junit-platform-engine:1.5.1')
-        testRuntimeOnly ('org.junit.platform:junit-platform-commons:1.5.1')
     }
 
-    // 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성해줍니다.
+    // 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성
     task initSourceFolders {
         sourceSets*.java.srcDirs*.each {
             if (!it.exists()) {
@@ -75,7 +65,19 @@ subprojects {
 
     dependencyManagement {
         imports {
-            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        }
+    }
+
+//    task wrapper(type: Wrapper) {
+//        gradleVersion = '4.8.1'
+//    }
+    jar {
+//        from {
+//            configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
+//        }
+        from {
+            (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 
