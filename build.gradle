@@ -34,9 +34,6 @@ subprojects {
         compileOnly {
             extendsFrom annotationProcessor
         }
-
-        // configuration that holds jars to include in the jar
-        extraLibs
     }
 
     dependencies {
@@ -44,7 +41,7 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok'
     }
 
-    // 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성
+    /* 해당 task로 서브 모듈 추가시 기초적인 디렉토리를 자동으로 생성 */
     task initSourceFolders {
         sourceSets*.java.srcDirs*.each {
             if (!it.exists()) {
@@ -62,12 +59,6 @@ subprojects {
     dependencyManagement {
         imports {
             mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
-        }
-    }
-
-    jar {
-        from {
-            (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) }
         }
     }
 
