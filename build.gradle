@@ -22,7 +22,10 @@ allprojects {
 
 }
 
-def javaProjects = [project(':logging-system')]
+def javaProjects = [
+        project(':playground-logging-system'),
+        project(':playground-batch')
+]
 
 configure(javaProjects) {
 
