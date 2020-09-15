@@ -2,3 +2,5 @@ rootProject.name = 'playground'
 
 include 'playground-logging-system'
 include 'playground-batch'
+include 'playground-core'
+include 'playground-learning-test'
