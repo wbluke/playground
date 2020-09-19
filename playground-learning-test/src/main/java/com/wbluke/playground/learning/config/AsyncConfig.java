@@ -19,7 +19,7 @@ public class AsyncConfig {
 
         executor.setCorePoolSize(POOL_SIZE);
         executor.setMaxPoolSize(POOL_SIZE);
-        executor.setThreadNamePrefix("learning-module-default-thread-");
+        executor.setThreadNamePrefix("learning-thread-");
         return executor;
     }
 

@@ -3,6 +3,7 @@ package com.wbluke.playground.learning.completablefuture;
 import com.wbluke.playground.learning.SleepExecutor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
@@ -13,7 +14,8 @@ import java.util.stream.Collectors;
 @SpringBootTest
 public class CompletableFutureTest {
 
-    private SleepExecutor sleepExecutor = new SleepExecutor();
+    @Autowired
+    private SleepExecutor sleepExecutor;
 
     @DisplayName("CompletableFuture")
     @Test
