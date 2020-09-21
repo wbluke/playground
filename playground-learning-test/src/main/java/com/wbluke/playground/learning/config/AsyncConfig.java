@@ -11,9 +11,10 @@ import java.util.concurrent.Executor;
 @Configuration
 public class AsyncConfig {
 
+    public static final String LEARNING_DEFAULT_EXECUTOR_NAME = "threadPoolTaskExecutor";
     private static final int POOL_SIZE = 3;
 
-    @Bean(name = "threadPoolTaskExecutor")
+    @Bean(name = LEARNING_DEFAULT_EXECUTOR_NAME)
     public Executor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
 

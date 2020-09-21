@@ -17,9 +17,9 @@ public class CompletableFutureTest {
     @Autowired
     private SleepExecutor sleepExecutor;
 
-    @DisplayName("CompletableFuture")
+    @DisplayName("CompletableFuture.allOf()")
     @Test
-    void name() {
+    void allOf() {
         /* given */
         List<String> messages = Arrays.asList("Hello", "Hi", "Bye", "Yes", "No");
         List<CompletableFuture<String>> messageFutures = messages.stream()
