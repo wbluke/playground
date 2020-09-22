@@ -1,3 +1,5 @@
 dependencies {
     compile project(':playground-core')
+
+    testCompileOnly 'org.projectlombok:lombok'
 }

@@ -1,22 +1,23 @@
 package com.wbluke.playground.learning;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
-
-import static com.wbluke.playground.learning.config.AsyncConfig.LEARNING_DEFAULT_EXECUTOR_NAME;
+import java.util.concurrent.Executor;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class SleepExecutor {
 
-    @Async(LEARNING_DEFAULT_EXECUTOR_NAME)
+    private final Executor threadPoolTaskExecutor;
+
     public CompletableFuture<String> sayMessageAfterOneSecond(String message) {
         log.debug("start : message = {}", message);
 
-        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sleep(message));
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sleep(message), threadPoolTaskExecutor);
 
         log.debug("end : message = {}", message);
         return messageFuture;
