@@ -131,4 +131,23 @@ public class CompletableFutureTest {
         assertThat(result).isEqualTo("applied message : say Hello");
     }
 
+    @DisplayName("CompletableFuture.thenCompose()")
+    @Test
+    void thenCompose() {
+        /* given */
+        CompletableFuture<String> messageFuture = sleepExecutor.sayMessageAfterOneSecond("Hello");
+
+        /* when */
+        String result = messageFuture.thenApply(message -> "applied message : " + message)
+                .thenCompose(message -> {
+                    log.debug("thenCompose : {}", message);
+                    return CompletableFuture.completedFuture(message);
+                })
+                .join();
+
+        /* then */
+        log.debug("result = {}", result);
+        assertThat(result).isEqualTo("applied message : say Hello");
+    }
+
 }
