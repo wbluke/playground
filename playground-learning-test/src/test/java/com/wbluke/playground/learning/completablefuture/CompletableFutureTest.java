@@ -72,11 +72,59 @@ public class CompletableFutureTest {
         CompletableFuture<String> messageFuture = sleepExecutor.sayMessageAfterOneSecond("Hello");
 
         /* when */
-        String result = messageFuture.handle((message, throwable) -> "applied message : " + message)
+        String result = messageFuture.handle(
+                (message, throwable) -> {
+                    log.debug("handle : CompletableFuture가 처음 진행한 스레드가 쭉 이어서 진행한다.");
+                    return "applied message : " + message;
+                })
                 .join();
 
         /* then */
-        CompletableFuture.allOf(messageFuture)
+        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
+                .join();
+
+        log.debug("result = {}", result);
+        assertThat(result).isEqualTo("applied message : say Hello");
+    }
+
+    @DisplayName("CompletableFuture.handleAsync()")
+    @Test
+    void handleAsync() {
+        /* given */
+        CompletableFuture<String> messageFuture = sleepExecutor.sayMessageAfterOneSecond("Hello");
+
+        /* when */
+        String result = messageFuture.handleAsync(
+                (message, throwable) -> {
+                    log.debug("handleAsync : 스레드 풀을 지정하지 않으면 기본 스레드 풀의 새로운 스레드가 async하게 진행한다.");
+                    return "applied message : " + message;
+                })
+                .join();
+
+        /* then */
+        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
+                .join();
+
+        log.debug("result = {}", result);
+        assertThat(result).isEqualTo("applied message : say Hello");
+    }
+
+    @DisplayName("CompletableFuture.handleAsync() with thread pool")
+    @Test
+    void handleAsyncWithThreadPool() {
+        /* given */
+        CompletableFuture<String> messageFuture = sleepExecutor.sayMessageAfterOneSecond("Hello");
+
+        /* when */
+        String result = messageFuture.handleAsync(
+                (message, throwable) -> {
+                    log.debug("handleAsync with Thread Pool : 지정한 스레드 풀의 새로운 스레드가 async하게 진행한다.");
+                    return "applied message : " + message;
+                }, threadPoolTaskExecutor)
+                .join();
+
+        /* then */
+        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
                 .join();
 
         log.debug("result = {}", result);
