@@ -23,10 +23,11 @@ allprojects {
 }
 
 def javaProjects = [
-        project(':playground-logging-system'),
         project(':playground-batch'),
         project(':playground-core'),
-        project(':playground-learning-test')
+        project(':playground-learning-test'),
+        project(':playground-logging-system'),
+        project(':playground-web'),
 ]
 
 configure(javaProjects) {
