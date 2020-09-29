@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
-//@SpringBootTest
+@SpringBootTest
 public class CompletableFutureTest {
 
     @Autowired
@@ -32,8 +32,7 @@ public class CompletableFutureTest {
         String result = messageFuture.join();
 
         /* then */
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("say Hello");
+        assertThat(result).isEqualTo("Say Hello");
     }
 
     @DisplayName("CompletableFuture.runAsync()")
@@ -58,7 +57,6 @@ public class CompletableFutureTest {
         String result = messageFuture.join();
 
         /* then */
-        log.info("result = {}", result);
         assertThat(result).isEqualTo("Hello");
     }
 
@@ -79,9 +77,8 @@ public class CompletableFutureTest {
                 .join();
 
         /* then */
-        for (String message : saidMessages) {
-            log.info("message = {}", message);
-        }
+        List<String> expectedMessages = Arrays.asList("Say Hello", "Say Hi", "Say Bye", "Say Yes", "Say No");
+        assertThat(expectedMessages.equals(saidMessages)).isTrue();
     }
 
     @DisplayName("CompletableFuture.thenApply()")
@@ -100,8 +97,7 @@ public class CompletableFutureTest {
         CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
                 .join();
 
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("applied message : say Hello");
+        assertThat(result).isEqualTo("applied message : Say Hello");
     }
 
     @DisplayName("CompletableFuture.handle()")
@@ -123,8 +119,7 @@ public class CompletableFutureTest {
         CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
                 .join();
 
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("applied message : say Hello");
+        assertThat(result).isEqualTo("applied message : Say Hello");
     }
 
     @DisplayName("CompletableFuture.handleAsync()")
@@ -146,8 +141,7 @@ public class CompletableFutureTest {
         CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
                 .join();
 
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("applied message : say Hello");
+        assertThat(result).isEqualTo("applied message : Say Hello");
     }
 
     @DisplayName("CompletableFuture.handleAsync() with thread pool")
@@ -169,8 +163,7 @@ public class CompletableFutureTest {
         CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
                 .join();
 
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("applied message : say Hello");
+        assertThat(result).isEqualTo("applied message : Say Hello");
     }
 
     @DisplayName("CompletableFuture.thenCompose()")
@@ -190,14 +183,16 @@ public class CompletableFutureTest {
                 .join();
 
         /* then */
-        log.info("result = {}", result);
-        assertThat(result).isEqualTo("applied message : say Hello");
+        assertThat(result).isEqualTo("applied message : Say Hello");
     }
 
     private String sayMessage(String message) {
         sleepOneSecond();
 
-        return "say " + message;
+        String saidMessage = "Say " + message;
+        log.info("Said Message = {}", saidMessage);
+
+        return saidMessage;
     }
 
     private void sleepOneSecond() {
