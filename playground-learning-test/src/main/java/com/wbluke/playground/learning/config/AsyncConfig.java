@@ -2,7 +2,6 @@ package com.wbluke.playground.learning.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -15,7 +14,6 @@ public class AsyncConfig {
     public static final String LEARNING_DEFAULT_EXECUTOR_NAME = "threadPoolTaskExecutor";
     private static final int POOL_SIZE = 3;
 
-    @Primary
     @Bean(name = LEARNING_DEFAULT_EXECUTOR_NAME)
     public Executor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

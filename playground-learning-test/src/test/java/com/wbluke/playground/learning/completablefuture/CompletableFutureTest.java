@@ -60,6 +60,133 @@ public class CompletableFutureTest {
         assertThat(result).isEqualTo("Hello");
     }
 
+    @DisplayName("CompletableFuture.thenApply()")
+    @Test
+    void thenApply() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message));
+
+        /* when */
+        String result = messageFuture
+                .thenApply(saidMessage -> "Applied message : " + saidMessage)
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Applied message : Say Hello");
+    }
+
+    @DisplayName("CompletableFuture.thenAccept()")
+    @Test
+    void thenAccept() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message));
+
+        /* when */ /* then */
+        messageFuture
+                .thenAccept(saidMessage -> {
+                    String acceptedMessage = "accepted message : " + saidMessage;
+                    log.info("thenAccept {}", acceptedMessage);
+                })
+                .join();
+    }
+
+    @DisplayName("thenApply() : 처음 진행한 스레드가 쭉 이어서 진행한다.")
+    @Test
+    void thenApplyWithSameThread() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(
+                () -> sayMessage(message), threadPoolTaskExecutor
+        );
+
+        /* when */
+        String result = messageFuture
+                .thenApply(saidMessage -> {
+                    log.info("thenApply() : Same Thread");
+                    return "Applied message : " + saidMessage;
+                })
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Applied message : Say Hello");
+    }
+
+    @DisplayName("thenApplyAsync() : 스레드 풀을 지정하지 않으면 기본 스레드 풀의 새로운 스레드가 async하게 진행한다.")
+    @Test
+    void thenApplyAsync() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(
+                () -> sayMessage(message), threadPoolTaskExecutor
+        );
+
+        /* when */
+        String result = messageFuture
+                .thenApplyAsync(saidMessage -> {
+                    log.info("thenApplyAsync() : New thread in another thread pool");
+                    return "Applied message : " + saidMessage;
+                })
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Applied message : Say Hello");
+    }
+
+    @DisplayName("handleAsync() : 지정한 스레드 풀의 새로운 스레드가 async하게 진행한다.")
+    @Test
+    void thenApplyAsyncWithAnotherThreadPool() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(
+                () -> sayMessage(message), threadPoolTaskExecutor
+        );
+
+        /* when */
+        String result = messageFuture
+                .thenApplyAsync(saidMessage -> {
+                    log.info("thenApplyAsync() : New thread in same thread pool");
+                    return "Applied message : " + saidMessage;
+                }, threadPoolTaskExecutor)
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Applied message : Say Hello");
+    }
+
+    @DisplayName("CompletableFuture.exceptionally()")
+    @Test
+    void exceptionally() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessageThrowingException(message));
+
+        /* when */
+        String result = messageFuture
+                .exceptionally(Throwable::getMessage)
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("java.lang.IllegalStateException: exception message");
+    }
+
+    @DisplayName("CompletableFuture.handle()")
+    @Test
+    void handle() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message));
+
+        /* when */
+        String result = messageFuture
+                .handle((saidMessage, throwable) -> "Applied message : " + saidMessage)
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Applied message : Say Hello");
+    }
+
     @DisplayName("CompletableFuture.allOf()")
     @Test
     void allOf() {
@@ -81,91 +208,6 @@ public class CompletableFutureTest {
         assertThat(expectedMessages.equals(saidMessages)).isTrue();
     }
 
-    @DisplayName("CompletableFuture.thenApply()")
-    @Test
-    void thenApply() {
-        /* given */
-        String message = "Hello";
-        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message));
-
-        /* when */
-        String result = messageFuture
-                .thenApply(saidMessage -> "applied message : " + saidMessage)
-                .join();
-
-        /* then */
-        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
-                .join();
-
-        assertThat(result).isEqualTo("applied message : Say Hello");
-    }
-
-    @DisplayName("CompletableFuture.handle()")
-    @Test
-    void handle() {
-        /* given */
-        String message = "Hello";
-        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message), threadPoolTaskExecutor);
-
-        /* when */
-        String result = messageFuture
-                .handle((saidMessage, throwable) -> {
-                    log.info("handle : CompletableFuture가 처음 진행한 스레드가 쭉 이어서 진행한다.");
-                    return "applied message : " + saidMessage;
-                })
-                .join();
-
-        /* then */
-        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
-                .join();
-
-        assertThat(result).isEqualTo("applied message : Say Hello");
-    }
-
-    @DisplayName("CompletableFuture.handleAsync()")
-    @Test
-    void handleAsync() {
-        /* given */
-        String message = "Hello";
-        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message), threadPoolTaskExecutor);
-
-        /* when */
-        String result = messageFuture
-                .handleAsync((saidMessage, throwable) -> {
-                    log.info("handleAsync : 스레드 풀을 지정하지 않으면 기본 스레드 풀의 새로운 스레드가 async하게 진행한다.");
-                    return "applied message : " + saidMessage;
-                })
-                .join();
-
-        /* then */
-        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
-                .join();
-
-        assertThat(result).isEqualTo("applied message : Say Hello");
-    }
-
-    @DisplayName("CompletableFuture.handleAsync() with thread pool")
-    @Test
-    void handleAsyncWithThreadPool() {
-        /* given */
-        String message = "Hello";
-        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message), threadPoolTaskExecutor);
-
-        /* when */
-        String result = messageFuture
-                .handleAsync((saidMessage, throwable) -> {
-                    log.info("handleAsync with Thread Pool : 지정한 스레드 풀의 새로운 스레드가 async하게 진행한다.");
-                    return "applied message : " + saidMessage;
-                }, threadPoolTaskExecutor)
-                .join();
-
-        /* then */
-        CompletableFuture.allOf(messageFuture) // 비동기 동작을 확인하기 위해 Blocking
-                .join();
-
-        assertThat(result).isEqualTo("applied message : Say Hello");
-    }
-
     @DisplayName("CompletableFuture.thenCompose()")
     @Test
     void thenCompose() {
@@ -175,15 +217,33 @@ public class CompletableFutureTest {
 
         /* when */
         String result = messageFuture
-                .thenApply(saidMessage -> "applied message : " + saidMessage)
-                .thenCompose(appliedMessage -> {
-                    log.info("thenCompose : {}", appliedMessage);
-                    return CompletableFuture.completedFuture(appliedMessage);
-                })
+                .thenCompose(saidMessage -> CompletableFuture.supplyAsync(() -> {
+                    sleepOneSecond();
+                    return saidMessage + "!";
+                }))
                 .join();
 
         /* then */
-        assertThat(result).isEqualTo("applied message : Say Hello");
+        assertThat(result).isEqualTo("Say Hello!");
+    }
+
+    @DisplayName("CompletableFuture.thenCombine()")
+    @Test
+    void thenCombine() {
+        /* given */
+        String message = "Hello";
+        CompletableFuture<String> messageFuture = CompletableFuture.supplyAsync(() -> sayMessage(message));
+
+        /* when */
+        String result = messageFuture
+                .thenCombine(CompletableFuture.supplyAsync(() -> {
+                    sleepOneSecond();
+                    return "!";
+                }), (message1, message2) -> message1 + message2)
+                .join();
+
+        /* then */
+        assertThat(result).isEqualTo("Say Hello!");
     }
 
     private String sayMessage(String message) {
@@ -193,6 +253,12 @@ public class CompletableFutureTest {
         log.info("Said Message = {}", saidMessage);
 
         return saidMessage;
+    }
+
+    private String sayMessageThrowingException(String message) {
+        sleepOneSecond();
+
+        throw new IllegalStateException("exception message");
     }
 
     private void sleepOneSecond() {
