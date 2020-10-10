@@ -1,2 +1,18 @@
+spring:
+  profiles:
+    active: local
+
 logging-module:
   version: 0.0.2
+
+---
+spring:
+  profiles: local
+
+---
+spring:
+  profiles: develop
+
+---
+spring:
+  profiles: prod
