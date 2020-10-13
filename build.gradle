@@ -41,8 +41,10 @@ configure(javaProjects) {
     sourceCompatibility = 1.8
 
     dependencies {
-        compileOnly 'org.projectlombok:lombok'
+        implementation 'org.projectlombok:lombok'
+        testImplementation 'org.projectlombok:lombok'
         annotationProcessor 'org.projectlombok:lombok'
+        testAnnotationProcessor 'org.projectlombok:lombok'
 
         runtimeOnly 'com.h2database:h2'
 
